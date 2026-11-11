@@ -133,6 +133,12 @@
       margin: 0 0 18px;
     }
 
+    .auto-status {
+      margin: -8px 0 16px;
+      color: #0a6b2b;
+      font-weight: 700;
+    }
+
     .inventory-list {
       margin: 0 0 20px;
       padding: 0;
@@ -159,6 +165,16 @@
       object-fit: contain;
     }
 
+    .inventory-item-details {
+      display: grid;
+      gap: 2px;
+    }
+
+    .inventory-item-details small {
+      color: #555;
+      font-size: 0.75rem;
+    }
+
     .close-inventory {
       border: 1px solid #111;
       padding: 8px 12px;
@@ -183,6 +199,7 @@
     <section id="inventory" class="inventory" hidden aria-labelledby="inventoryTitle">
       <div class="inventory-panel">
         <h2 id="inventoryTitle">Inventory</h2>
+        <p id="autoStatus" class="auto-status" role="status" hidden>Auto mode activated</p>
         <ul id="inventoryList" class="inventory-list"></ul>
         <button id="closeInventory" class="close-inventory" type="button">Close</button>
       </div>
@@ -211,10 +228,21 @@
     const inventory = document.getElementById('inventory');
     const inventoryList = document.getElementById('inventoryList');
     const closeInventory = document.getElementById('closeInventory');
+    const autoStatus = document.getElementById('autoStatus');
 
     let clickCount = 0;
     let bannerTimeout;
+    let autoClicker;
+    let typedSequence = '';
     const collectedDrops = new Map();
+    const autoClickInterval = 10;
+
+    function stopAutoClicker() {
+      clearInterval(autoClicker);
+      autoClicker = undefined;
+      typedSequence = '';
+      autoStatus.hidden = true;
+    }
 
     function rollDrop() {
       return drops.filter((drop) => Math.floor(Math.random() * drop.odds) === 0);
@@ -230,7 +258,11 @@
       }
 
       wonDrops.forEach((drop) => {
-        collectedDrops.set(drop.name, (collectedDrops.get(drop.name) || 0) + 1);
+        const collected = collectedDrops.get(drop.name);
+        collectedDrops.set(drop.name, {
+          count: (collected?.count || 0) + 1,
+          firstFoundAt: collected?.firstFoundAt || clickCount
+        });
       });
 
       inventoryButton.hidden = false;
@@ -246,16 +278,41 @@
 
     inventoryButton.addEventListener('click', () => {
       inventoryList.replaceChildren();
-      collectedDrops.forEach((count, name) => {
+      collectedDrops.forEach(({ count, firstFoundAt }, name) => {
         const item = document.createElement('li');
-        item.innerHTML = `<span class="inventory-item"><img class="inventory-item-image" src="token.png" alt="" />${name}</span><strong>${count}</strong>`;
+        item.innerHTML = `<span class="inventory-item"><img class="inventory-item-image" src="token.png" alt="" /><span class="inventory-item-details"><span>${name}</span><small>Found after ${firstFoundAt} chests</small></span></span><strong>${count}</strong>`;
         inventoryList.appendChild(item);
       });
       inventory.hidden = false;
     });
 
+    document.addEventListener('keydown', (event) => {
+      if (inventory.hidden) {
+        return;
+      }
+
+      if (event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) {
+        return;
+      }
+
+      typedSequence = `${typedSequence}${event.key.toLowerCase()}`.slice(-4);
+      if (typedSequence !== 'auto' || autoClicker) {
+        return;
+      }
+
+      autoStatus.hidden = false;
+      autoClicker = setInterval(() => chestButton.click(), autoClickInterval);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (event.isTrusted && autoClicker) {
+        stopAutoClicker();
+      }
+    });
+
     closeInventory.addEventListener('click', () => {
       inventory.hidden = true;
+      stopAutoClicker();
     });
   </script>
 </body>
