@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fortnite One Piece Chest Clicker</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #121212;
+      color: #f5f5f5;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .game {
+      width: min(700px, 100%);
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+    }
+
+    .counter {
+      font-size: 1.2rem;
+      margin: 12px 0 20px;
+    }
+
+    .chest-button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ffcf4d, #ff8a00);
+      color: #111;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.05s ease;
+      margin-bottom: 14px;
+    }
+
+    .chest-button:active {
+      transform: scale(0.98);
+    }
+
+    .result {
+      min-height: 24px;
+      margin-bottom: 20px;
+      color: #ffd88f;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #333;
+      padding: 10px 8px;
+      text-align: left;
+    }
+
+    th {
+      color: #ccc;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="game">
+    <h1>Fortnite One Piece Chest Clicker</h1>
+    <p class="counter">Total Clicks: <span id="clickCount">0</span></p>
+
+    <button id="chestButton" class="chest-button" type="button">Click the Chest</button>
+    <p id="dropResult" class="result">Open the chest to roll for a drop.</p>
+
+    <h2>Drop Chances</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Placeholder Item</th>
+          <th>Chance</th>
+          <th>Percent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Weekly Gold Outfit</td>
+          <td>1 in 1,562,500</td>
+          <td>0.000064%</td>
+        </tr>
+        <tr>
+          <td>Pirate Shop Access</td>
+          <td>1 in 137,500</td>
+          <td>0.00073%</td>
+        </tr>
+        <tr>
+          <td>Weekly Vehicle and Decal</td>
+          <td>1 in 7,813</td>
+          <td>0.0128%</td>
+        </tr>
+        <tr>
+          <td>Weekly Pickaxe or Back Bling</td>
+          <td>1 in 568</td>
+          <td>0.176%</td>
+        </tr>
+        <tr>
+          <td>Weekly Jam Track</td>
+          <td>1 in 391</td>
+          <td>0.256%</td>
+        </tr>
+        <tr>
+          <td>Weekly Loading Screen</td>
+          <td>1 in 272</td>
+          <td>0.368%</td>
+        </tr>
+        <tr>
+          <td>Any Gizmo</td>
+          <td>1 in 127</td>
+          <td>0.787%</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const drops = [
+      { name: 'Weekly Gold Outfit', odds: 1562500 },
+      { name: 'Pirate Shop Access', odds: 137500 },
+      { name: 'Weekly Vehicle and Decal', odds: 7813 },
+      { name: 'Weekly Pickaxe or Back Bling', odds: 568 },
+      { name: 'Weekly Jam Track', odds: 391 },
+      { name: 'Weekly Loading Screen', odds: 272 },
+      { name: 'Any Gizmo', odds: 127 }
+    ];
+
+    const clickCountElement = document.getElementById('clickCount');
+    const dropResultElement = document.getElementById('dropResult');
+    const chestButton = document.getElementById('chestButton');
+
+    let clickCount = 0;
+
+    function rollDrop() {
+      return drops.filter((drop) => Math.floor(Math.random() * drop.odds) === 0);
+    }
+
+    chestButton.addEventListener('click', () => {
+      clickCount += 1;
+      clickCountElement.textContent = clickCount;
+
+      const wonDrops = rollDrop();
+      if (wonDrops.length > 0) {
+        dropResultElement.textContent = `You got: ${wonDrops.map((drop) => drop.name).join(', ')}`;
+      } else {
+        dropResultElement.textContent = 'No rare drop this click. Keep opening chests!';
+      }
+    });
+  </script>
+</body>
+</html>
