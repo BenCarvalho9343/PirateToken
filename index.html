@@ -6,139 +6,183 @@
   <title>Fortnite One Piece Chest Clicker</title>
   <style>
     :root {
-      color-scheme: dark;
       font-family: Arial, sans-serif;
     }
 
     body {
       margin: 0;
-      background: #121212;
-      color: #f5f5f5;
-      display: grid;
-      place-items: center;
+      background: #fff;
+      color: #111;
       min-height: 100vh;
-      padding: 20px;
     }
 
     .game {
-      width: min(700px, 100%);
-      background: #1e1e1e;
-      border: 1px solid #333;
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    h1 {
-      margin-top: 0;
-      font-size: 1.8rem;
+      min-height: 100vh;
+      position: relative;
     }
 
     .counter {
-      font-size: 1.2rem;
-      margin: 12px 0 20px;
+      margin: 0;
+      padding: 22px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .chest-area {
+      position: absolute;
+      top: 56%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
     }
 
     .chest-button {
-      width: 100%;
+      display: block;
+      width: min(280px, 70vw);
       border: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ffcf4d, #ff8a00);
-      color: #111;
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 16px;
+      padding: 0;
+      background: transparent;
       cursor: pointer;
       transition: transform 0.05s ease;
-      margin-bottom: 14px;
     }
 
     .chest-button:active {
       transform: scale(0.98);
     }
 
-    .result {
-      min-height: 24px;
-      margin-bottom: 20px;
-      color: #ffd88f;
-      font-weight: 600;
+    .chest-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
     }
 
-    table {
+    .chest-image {
+      display: block;
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 0.95rem;
+      height: auto;
     }
 
-    th,
-    td {
-      border-bottom: 1px solid #333;
-      padding: 10px 8px;
-      text-align: left;
+    .banner {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      z-index: 2;
+      width: min(520px, calc(100% - 32px));
+      padding: 16px;
+      transform: translate(-50%, -100%);
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-weight: 700;
+      box-sizing: border-box;
+      transition: transform 0.2s ease;
     }
 
-    th {
-      color: #ccc;
-      font-weight: 600;
+    .reward-image {
+      width: 42px;
+      height: 42px;
+      margin-right: 10px;
+      vertical-align: middle;
+      object-fit: contain;
+    }
+
+    .banner.visible {
+      transform: translate(-50%, 0);
+    }
+
+    .inventory-button {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      border: 1px solid #111;
+      border-radius: 6px;
+      padding: 10px 14px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .inventory {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    .inventory[hidden] {
+      display: none;
+    }
+
+    .inventory-panel {
+      width: min(420px, 100%);
+      border: 1px solid #111;
+      padding: 24px;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    .inventory-panel h2 {
+      margin: 0 0 18px;
+    }
+
+    .inventory-list {
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .inventory-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .inventory-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .inventory-item-image {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .close-inventory {
+      border: 1px solid #111;
+      padding: 8px 12px;
+      background: #111;
+      color: #fff;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <main class="game">
-    <h1>Fortnite One Piece Chest Clicker</h1>
-    <p class="counter">Total Clicks: <span id="clickCount">0</span></p>
+    <p class="counter">Chests opened: <span id="clickCount">0</span></p>
+    <div id="dropBanner" class="banner" role="status" aria-live="polite"></div>
 
-    <button id="chestButton" class="chest-button" type="button">Click the Chest</button>
-    <p id="dropResult" class="result">Open the chest to roll for a drop.</p>
+    <div class="chest-area">
+      <button id="chestButton" class="chest-button" type="button" aria-label="Open chest">
+        <img class="chest-image" src="chest.png" alt="Treasure chest" />
+      </button>
+    </div>
 
-    <h2>Drop Chances</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Placeholder Item</th>
-          <th>Chance</th>
-          <th>Percent</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Weekly Gold Outfit</td>
-          <td>1 in 1,562,500</td>
-          <td>0.000064%</td>
-        </tr>
-        <tr>
-          <td>Pirate Shop Access</td>
-          <td>1 in 137,500</td>
-          <td>0.00073%</td>
-        </tr>
-        <tr>
-          <td>Weekly Vehicle and Decal</td>
-          <td>1 in 7,813</td>
-          <td>0.0128%</td>
-        </tr>
-        <tr>
-          <td>Weekly Pickaxe or Back Bling</td>
-          <td>1 in 568</td>
-          <td>0.176%</td>
-        </tr>
-        <tr>
-          <td>Weekly Jam Track</td>
-          <td>1 in 391</td>
-          <td>0.256%</td>
-        </tr>
-        <tr>
-          <td>Weekly Loading Screen</td>
-          <td>1 in 272</td>
-          <td>0.368%</td>
-        </tr>
-        <tr>
-          <td>Any Gizmo</td>
-          <td>1 in 127</td>
-          <td>0.787%</td>
-        </tr>
-      </tbody>
-    </table>
+    <button id="inventoryButton" class="inventory-button" type="button" hidden>Inventory</button>
+    <section id="inventory" class="inventory" hidden aria-labelledby="inventoryTitle">
+      <div class="inventory-panel">
+        <h2 id="inventoryTitle">Inventory</h2>
+        <ul id="inventoryList" class="inventory-list"></ul>
+        <button id="closeInventory" class="close-inventory" type="button">Close</button>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -153,10 +197,16 @@
     ];
 
     const clickCountElement = document.getElementById('clickCount');
-    const dropResultElement = document.getElementById('dropResult');
+    const dropBanner = document.getElementById('dropBanner');
     const chestButton = document.getElementById('chestButton');
+    const inventoryButton = document.getElementById('inventoryButton');
+    const inventory = document.getElementById('inventory');
+    const inventoryList = document.getElementById('inventoryList');
+    const closeInventory = document.getElementById('closeInventory');
 
     let clickCount = 0;
+    let bannerTimeout;
+    const collectedDrops = new Map();
 
     function rollDrop() {
       return drops.filter((drop) => Math.floor(Math.random() * drop.odds) === 0);
@@ -167,11 +217,37 @@
       clickCountElement.textContent = clickCount;
 
       const wonDrops = rollDrop();
-      if (wonDrops.length > 0) {
-        dropResultElement.textContent = `You got: ${wonDrops.map((drop) => drop.name).join(', ')}`;
-      } else {
-        dropResultElement.textContent = 'No rare drop this click. Keep opening chests!';
+      if (wonDrops.length === 0) {
+        return;
       }
+
+      wonDrops.forEach((drop) => {
+        collectedDrops.set(drop.name, (collectedDrops.get(drop.name) || 0) + 1);
+      });
+
+      inventoryButton.hidden = false;
+      dropBanner.innerHTML = `<img class="reward-image" src="token.png" alt="" />You got: ${wonDrops.map((drop) => drop.name).join(', ')}`;
+      dropBanner.classList.add('visible');
+      chestButton.disabled = true;
+      clearTimeout(bannerTimeout);
+      bannerTimeout = setTimeout(() => {
+        dropBanner.classList.remove('visible');
+        chestButton.disabled = false;
+      }, 3000);
+    });
+
+    inventoryButton.addEventListener('click', () => {
+      inventoryList.replaceChildren();
+      collectedDrops.forEach((count, name) => {
+        const item = document.createElement('li');
+        item.innerHTML = `<span class="inventory-item"><img class="inventory-item-image" src="token.png" alt="" />${name}</span><strong>${count}</strong>`;
+        inventoryList.appendChild(item);
+      });
+      inventory.hidden = false;
+    });
+
+    closeInventory.addEventListener('click', () => {
+      inventory.hidden = true;
     });
   </script>
 </body>
