@@ -67,8 +67,8 @@
       top: 0;
       left: 50%;
       z-index: 2;
-      width: min(520px, calc(100% - 32px));
-      padding: 16px;
+      width: min(560px, calc(100% - 24px));
+      padding: 20px;
       transform: translate(-50%, -100%);
       background: #111;
       color: #fff;
@@ -78,11 +78,15 @@
       transition: transform 0.2s ease;
     }
 
+    .reward-text {
+      display: block;
+    }
+
     .reward-image {
-      width: 42px;
-      height: 42px;
-      margin-right: 10px;
-      vertical-align: middle;
+      display: block;
+      width: 52px;
+      height: 52px;
+      margin: 12px auto 0;
       object-fit: contain;
     }
 
@@ -190,10 +194,13 @@
       { name: 'Weekly Gold Outfit', odds: 1562500 },
       { name: 'Pirate Shop Access', odds: 137500 },
       { name: 'Weekly Vehicle and Decal', odds: 7813 },
-      { name: 'Weekly Pickaxe or Back Bling', odds: 568 },
+      { name: 'Weekly Pickaxe', odds: 1136 },
+      { name: 'Weekly Back Bling', odds: 1136 },
       { name: 'Weekly Jam Track', odds: 391 },
       { name: 'Weekly Loading Screen', odds: 272 },
-      { name: 'Any Gizmo', odds: 127 }
+      { name: 'Golden Firework', odds: 381 },
+      { name: 'Portable Extractor Extraction Accelerator', odds: 381 },
+      { name: 'Sprite Locator', odds: 381 }
     ];
 
     const clickCountElement = document.getElementById('clickCount');
@@ -226,7 +233,7 @@
       });
 
       inventoryButton.hidden = false;
-      dropBanner.innerHTML = `<img class="reward-image" src="token.png" alt="" />You got: ${wonDrops.map((drop) => drop.name).join(', ')}`;
+      dropBanner.innerHTML = `<span class="reward-text">You got: ${wonDrops.map((drop) => drop.name).join(', ')}</span><img class="reward-image" src="token.png" alt="" />`;
       dropBanner.classList.add('visible');
       chestButton.disabled = true;
       clearTimeout(bannerTimeout);
